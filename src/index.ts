@@ -28,12 +28,14 @@ async function run(): Promise<void> {
 	const hour = new Date().toLocaleString('fr-FR', { hour: '2-digit', timeZone: 'Europe/Paris' });
 	const minutes = new Date().toLocaleString('fr-FR', { minute: '2-digit', hour12: false, timeZone: 'Europe/Paris' });
 
-	if ((minutes === '0') || true) {
-		env.ACTIVITIES.forEach(activity => syncActivity(env, activity));
+	if ((minutes === '0')) {
+		for (const activity of env.ACTIVITIES) {
+			await syncActivity(env, activity);
+		}
 		await updateParkSchedules(env);
 	}
 
-	if ((hour === '00 h' && minutes === '0') || true) {
+	if ((hour === '00 h' && minutes === '0')) {
 		await updateMeetingWelcome(env);
 		await updateShowWelcome(env);
 
