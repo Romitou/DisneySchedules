@@ -4,8 +4,10 @@ import { fetchActivities } from './fetchActivities';
 import { deleteOutdatedShows, updateShowWelcome } from './showSchedules';
 import { Env } from './typings';
 import { syncActivity } from './syncActivities';
-import 'dotenv/config';
+import { config } from 'dotenv';
 import { REST } from '@discordjs/rest';
+
+config({ path: __dirname + '/../.env' });
 
 export function formatHour(hour: string) {
 	hour = hour.substring(0, 5);
@@ -13,6 +15,7 @@ export function formatHour(hour: string) {
 }
 
 async function run(): Promise<void> {
+	console.log(__dirname + '../.env');
 	const env: Env = {
 		MEETINGS_CHANNEL_ID: process.env.MEETINGS_CHANNEL_ID as string,
 		SHOWS_CHANNEL_ID: process.env.SHOWS_CHANNEL_ID as string,
