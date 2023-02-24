@@ -27,6 +27,11 @@ async function run(): Promise<void> {
 		DISCORD: new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN as string)
 	};
 	env.ACTIVITIES = await fetchActivities(env);
+	if (env.ACTIVITIES.length === 0) {
+		// Add 1 day to date
+		env.DATE = formatDate(new Date(new Date().getTime() + 24 * 60 * 60 * 1000));
+		env.ACTIVITIES = await fetchActivities(env);
+	}
 
 	if (process.argv.includes('--sync')) {
 		console.log('Syncing activities...');
