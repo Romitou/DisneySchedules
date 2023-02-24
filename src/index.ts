@@ -25,17 +25,16 @@ async function run(): Promise<void> {
 	};
 	env.ACTIVITIES = await fetchActivities(env);
 
-	const hour = new Date().toLocaleString('fr-FR', { hour: '2-digit', timeZone: 'Europe/Paris' });
-	const minutes = new Date().toLocaleString('fr-FR', { minute: '2-digit', hour12: false, timeZone: 'Europe/Paris' });
-
-	if ((minutes === '0')) {
+	if (process.argv.includes('--sync')) {
+		console.log('Syncing activities...');
 		for (const activity of env.ACTIVITIES) {
 			await syncActivity(env, activity);
 		}
 		await updateParkSchedules(env);
 	}
 
-	if ((hour === '00 h' && minutes === '0')) {
+	if (process.argv.includes('--cleanup')) {
+		console.log('Cleaning up...');
 		await updateMeetingWelcome(env);
 		await updateShowWelcome(env);
 

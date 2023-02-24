@@ -34,6 +34,7 @@ export function generateMeetingEmbed(meeting: Activity): APIEmbed {
 }
 
 export async function deleteOutdatedMeetings(env: Env) {
+    console.log('Deleting outdated meetings...');
     const activities = env.ACTIVITIES;
     const messages = await env.DISCORD.get(Routes.channelMessages(env.MEETINGS_CHANNEL_ID)) as APIMessage[];
     const outdatedMessages = messages.filter(message => {
@@ -49,6 +50,7 @@ export async function deleteOutdatedMeetings(env: Env) {
 }
 
 export async function updateMeetingWelcome(env: Env) {
+    console.log('Updating meeting welcome message...');
     const messages = await env.DISCORD.get(Routes.channelMessages(env.MEETINGS_CHANNEL_ID)) as APIMessage[];
 
     // Try to find welcome message

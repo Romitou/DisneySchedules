@@ -43,6 +43,7 @@ export function generateShowEmbed(show: Activity): APIEmbed {
 }
 
 export async function updateShowWelcome(env: Env) {
+    console.log('Updating show welcome message...');
     const messages = await env.DISCORD.get(Routes.channelMessages(env.SHOWS_CHANNEL_ID)) as APIMessage[];
 
     // Try to find welcome message
@@ -73,6 +74,7 @@ export async function updateShowWelcome(env: Env) {
 }
 
 export async function deleteOutdatedShows(env: Env) {
+    console.log('Deleting outdated shows...');
     const activities = env.ACTIVITIES;
     const messages = await env.DISCORD.get(Routes.channelMessages(env.SHOWS_CHANNEL_ID)) as APIMessage[];
     const outdatedMessages = messages.filter(message => {
