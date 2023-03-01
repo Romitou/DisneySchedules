@@ -9,6 +9,12 @@ export interface Env {
     PARK_SCHEDULES_QUERY: string;
     ACTIVITIES_QUERY: string;
     DISCORD: REST;
+    OVERRIDES: Record<string, OverrideActivity>;
+}
+
+export interface OverrideActivity {
+    name: string;
+    description: string;
 }
 
 export interface ActivitySchedule {

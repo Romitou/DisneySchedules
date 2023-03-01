@@ -11,6 +11,13 @@ export async function fetchActivities(env: Env): Promise<Activity[]> {
             activity.type = activity.subType.includes('Character') ? 'meeting' : 'show';
             // Remove all trailing spaces
             activity.name = activity.name.replace(/\s+$/, '');
+
+            const override = env.OVERRIDES[activity.id];
+            if (override) {
+                activity.name = override.name;
+                activity.shortDescription = override.description;
+            }
+
             return activity;
         });
 }

@@ -6,6 +6,7 @@ import { Env } from './typings';
 import { syncActivity } from './syncActivities';
 import { config } from 'dotenv';
 import { REST } from '@discordjs/rest';
+import * as fs from 'fs';
 
 config({ path: __dirname + '/../.env' });
 
@@ -24,8 +25,14 @@ async function run(): Promise<void> {
 		ACTIVITIES: [],
 		PARK_SCHEDULES_QUERY: process.env.PARK_SCHEDULES_QUERY as string,
 		ACTIVITIES_QUERY: process.env.ACTIVITIES_QUERY as string,
-		DISCORD: new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN as string)
+		DISCORD: new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN as string),
+		OVERRIDES: {},
 	};
+
+	if (fs.existsSync(__dirname + '/../overrides.json')) {
+		env.OVERRIDES = JSON.parse(fs.readFileSync(__dirname + '/../overrides.json', 'utf-8'));
+	}
+
 	env.ACTIVITIES = await fetchActivities(env);
 	if (env.ACTIVITIES.length === 0) {
 		// Add 1 day to date
@@ -48,6 +55,18 @@ async function run(): Promise<void> {
 
 		await deleteOutdatedMeetings(env);
 		await deleteOutdatedShows(env);
+	}
+
+	if (process.argv.includes('--overrides')) {
+		console.log('Generating activities...');
+		const generatedActivities: Record<string, Object> = {};
+		env.ACTIVITIES.forEach(activity => {
+			generatedActivities[activity.id] = {
+				name: activity.name,
+				description: activity.shortDescription,
+			}
+		})
+		fs.writeFileSync(__dirname + '/../overrides.json', JSON.stringify(generatedActivities, null, 2));
 	}
 }
 
