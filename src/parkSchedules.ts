@@ -1,9 +1,10 @@
 import { ofetch } from 'ofetch';
 import { APIEmbed, APIMessage, RESTPostAPIChannelMessageJSONBody, Routes } from 'discord-api-types/v10';
-import { formatHour } from './index';
+import { formatDate, formatHour } from './index';
 import { Env } from './typings';
 
-async function getParkSchedule(env: Env): Promise<string[]> {
+async function getParkSchedule(env: Env, overrideDate?: string): Promise<string[]> {
+    const date = overrideDate || env.DATE;
     const parkSchedules = await ofetch('https://api.disneylandparis.com/query', {
         method: 'POST',
         body: {
@@ -20,7 +21,7 @@ async function getParkSchedule(env: Env): Promise<string[]> {
                         ]
                     }
                 ],
-                date: env.DATE,
+                date,
             }
         },
         parseResponse: JSON.parse,
@@ -68,7 +69,8 @@ export async function updateParkSchedules(env: Env) {
     for (let i = 1; i < 8; i++) {
         const date = new Date();
         date.setDate(nowDate.getDate() + i);
-        const parkSchedules = await getParkSchedule(env);
+        const formattedDate = formatDate(date);
+        const parkSchedules = await getParkSchedule(env, formattedDate);
         sevenDaysEmbed.fields?.push({
             name: date.toLocaleDateString('fr-FR', { timeZone: 'Europe/Paris' }),
             value: `🏰 ${parkSchedules[0].replace('\n', ' ')}\n🎬 ${parkSchedules[1].replace('\n', ' ')}`,
