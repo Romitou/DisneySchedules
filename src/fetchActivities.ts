@@ -6,7 +6,7 @@ export async function fetchActivities(env: Env): Promise<Activity[]> {
     const activities = await getActivities(env);
 
     return activities.filter((activity) => activity.schedules.length > 0
-            && !activity.hideFunctionality.includes('Hide from Web List + Mobile App'))
+            && !['Hide from the Mobile App','Hide from Web List + Mobile App','Hide from the Listing Page','Hide from the Service'].includes(activity.hideFunctionality))
         .map((activity) => {
             activity.type = activity.subType.includes('Character') ? 'meeting' : 'show';
             // Remove all trailing spaces
