@@ -45,5 +45,7 @@ export interface Activity {
         value: string;
     }
     type: string;
+    compiledSchedules: string;
+    datedSchedules: Record<string, ActivitySchedule[]>;
     schedules: ActivitySchedule[];
 }

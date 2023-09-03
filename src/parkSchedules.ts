@@ -1,15 +1,14 @@
 import { ofetch } from 'ofetch';
 import { APIEmbed, APIMessage, RESTPostAPIChannelMessageJSONBody, Routes } from 'discord-api-types/v10';
-import { formatDate, formatHour } from './index';
+import { discordClient, formatDate, formatHour } from './index';
 import { Env } from './typings';
 
-async function getParkSchedule(env: Env, overrideDate?: string): Promise<string[]> {
-    const date = overrideDate || env.DATE;
+async function getParkSchedule(date: string): Promise<string[]> {
     const parkSchedules = await ofetch('https://api.disneylandparis.com/query', {
         method: 'POST',
         body: {
             operationName: 'activitySchedules',
-            query: env.PARK_SCHEDULES_QUERY,
+            query: process.env.PARK_SCHEDULES_QUERY as string,
             variables: {
                 market: 'fr-fr',
                 types: [
@@ -50,11 +49,11 @@ async function getParkSchedule(env: Env, overrideDate?: string): Promise<string[
     return [disneylandParkHours, waltDisneyStudiosParkHours];
 }
 
-export async function updateParkSchedules(env: Env) {
+export async function updateParkSchedules() {
     console.log('Updating park schedules...');
-    const todayParkSchedules = await getParkSchedule(env);
+    const todayParkSchedules = await getParkSchedule(formatDate(new Date()));
 
-    const messages = await env.DISCORD.get(Routes.channelMessages(env.PARKS_CHANNEL_ID)) as APIMessage[];
+    const messages = await discordClient.get(Routes.channelMessages(process.env.PARKS_CHANNEL_ID as string)) as APIMessage[];
     const botMessage = messages.find(message => message.embeds?.[0]?.title?.includes('🕙 Horaires des parcs'));
 
     const sevenDaysEmbed: APIEmbed = {
@@ -70,7 +69,7 @@ export async function updateParkSchedules(env: Env) {
         const date = new Date();
         date.setDate(nowDate.getDate() + i);
         const formattedDate = formatDate(date);
-        const parkSchedules = await getParkSchedule(env, formattedDate);
+        const parkSchedules = await getParkSchedule(formattedDate);
         sevenDaysEmbed.fields?.push({
             name: date.toLocaleDateString('fr-FR', { timeZone: 'Europe/Paris' }),
             value: `🏰 ${parkSchedules[0].replace('\n', ' ')}\n🎬 ${parkSchedules[1].replace('\n', ' ')}`,
@@ -109,8 +108,8 @@ export async function updateParkSchedules(env: Env) {
     }
 
     if (botMessage) {
-        await env.DISCORD.patch(Routes.channelMessage(env.PARKS_CHANNEL_ID, botMessage.id), { body });
+        await discordClient.patch(Routes.channelMessage(process.env.PARKS_CHANNEL_ID as string, botMessage.id), { body });
     } else {
-        await env.DISCORD.post(Routes.channelMessages(env.PARKS_CHANNEL_ID), { body });
+        await discordClient.post(Routes.channelMessages(process.env.PARKS_CHANNEL_ID as string), { body });
     }
 }
