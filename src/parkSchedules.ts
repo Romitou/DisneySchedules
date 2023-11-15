@@ -56,26 +56,30 @@ export async function updateParkSchedules() {
     const messages = await discordClient.get(Routes.channelMessages(process.env.PARKS_CHANNEL_ID as string)) as APIMessage[];
     const botMessage = messages.find(message => message.embeds?.[0]?.title?.includes('🕙 Horaires des parcs'));
 
+    console.log('test1')
     const sevenDaysEmbed: APIEmbed = {
-        title: '🛰️ Horaires des parcs - 7 prochains jours',
+        title: '🛰️ Horaires parcs des prochains jours',
         color: 0x97D8F6,
+        image: {
+            url: 'https://files.romitou.fr/dlp_schedules.png?time='+Date.now(),
+        },
         footer: {
             text: 'Dernière mise à jour : ' + new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Paris' }) + ' - Horaires sujets à modification',
         },
         fields: [],
     }
-    const nowDate = new Date();
-    for (let i = 1; i < 8; i++) {
-        const date = new Date();
-        date.setDate(nowDate.getDate() + i);
-        const formattedDate = formatDate(date);
-        const parkSchedules = await getParkSchedule(formattedDate);
-        sevenDaysEmbed.fields?.push({
-            name: date.toLocaleDateString('fr-FR', { timeZone: 'Europe/Paris' }),
-            value: `🏰 ${parkSchedules[0].replace('\n', ' ')}\n🎬 ${parkSchedules[1].replace('\n', ' ')}`,
-            inline: false,
-        })
-    }
+    //const nowDate = new Date();
+    // for (let i = 1; i < 8; i++) {
+    //     const date = new Date();
+    //     date.setDate(nowDate.getDate() + i);
+    //     const formattedDate = formatDate(date);
+    //     const parkSchedules = await getParkSchedule(formattedDate);
+    //     // sevenDaysEmbed.fields?.push({
+    //     //     name: date.toLocaleDateString('fr-FR', { timeZone: 'Europe/Paris' }),
+    //     //     value: `🏰 ${parkSchedules[0].replace('\n', ' ')}\n🎬 ${parkSchedules[1].replace('\n', ' ')}`,
+    //     //     inline: false,
+    //     // })
+    // }
 
     const todayDate = new Date().toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Europe/Paris' });
     const body: RESTPostAPIChannelMessageJSONBody = {
@@ -107,9 +111,11 @@ export async function updateParkSchedules() {
         ]
     }
 
+    console.log('test2')
     if (botMessage) {
-        await discordClient.patch(Routes.channelMessage(process.env.PARKS_CHANNEL_ID as string, botMessage.id), { body });
+        await discordClient.patch(Routes.channelMessage(process.env.PARKS_CHANNEL_ID as string, botMessage.id), { body }).catch(err => console.log(err));
     } else {
         await discordClient.post(Routes.channelMessages(process.env.PARKS_CHANNEL_ID as string), { body });
     }
+    console.log('test3')
 }

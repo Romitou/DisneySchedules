@@ -1,7 +1,7 @@
 import { updateParkSchedules } from './parkSchedules';
-import { deleteOutdatedMeetings, updateMeetingWelcome } from './meetingSchedules';
+import { deleteOutdatedMeetings } from './meetingSchedules';
 import { fetchActivities, getAllActivities } from './fetchActivities';
-import { deleteOutdatedShows, updateShowWelcome } from './showSchedules';
+import { deleteOutdatedShows } from './showSchedules';
 import { Env } from './typings';
 import { syncActivity } from './syncActivities';
 import { config } from 'dotenv';
@@ -20,6 +20,10 @@ export const discordClient = new REST({ version: '10' }).setToken(process.env.DI
 async function run(): Promise<void> {
 	let activities = await getAllActivities();
 
+	if (process.argv.includes('--hours')) {
+		await updateParkSchedules();
+	}
+
 	if (process.argv.includes('--sync')) {
 		console.log('Syncing activities...');
 		for (const activity of activities) {
@@ -30,9 +34,7 @@ async function run(): Promise<void> {
 
 	if (process.argv.includes('--cleanup')) {
 		console.log('Cleaning up...');
-		await updateMeetingWelcome();
-		await updateShowWelcome();
-
+		await updateParkSchedules();
 		await deleteOutdatedMeetings(activities);
 		await deleteOutdatedShows(activities);
 	}

@@ -46,6 +46,6 @@ export interface Activity {
     }
     type: string;
     compiledSchedules: string;
-    datedSchedules: Record<string, ActivitySchedule[]>;
+    datedSchedules: { from: number, to: number, schedules: string }[];
     schedules: ActivitySchedule[];
 }
