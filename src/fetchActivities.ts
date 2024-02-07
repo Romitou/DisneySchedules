@@ -154,8 +154,12 @@ export async function getActivities(date: string): Promise<Activity[]> {
                 date,
             }
         },
-        parseResponse: JSON.parse,
     }).catch(console.error).then(response => {
-        return response?.data?.activitySchedules || [];
+        console.log(response);
+        if (response.data) {
+            const json = JSON.parse(response.data);
+            return json?.activitySchedules || [];
+        }
+        return [];
     });
 }
