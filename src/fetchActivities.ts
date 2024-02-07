@@ -136,6 +136,23 @@ export async function fetchActivities(date: string): Promise<Activity[]> {
 }
 
 export async function getActivities(date: string): Promise<Activity[]> {
+    console.log('Fetching activities for date ' + date)
+    console.log('Body: ', {
+        operationName: 'activitySchedules',
+        query: process.env.ACTIVITIES_QUERY as string,
+        variables: {
+            market: 'fr-fr',
+            types: [
+                {
+                    type: "Entertainment",
+                    status: [
+                        "PERFORMANCE_TIME"
+                    ]
+                }
+            ],
+            date,
+        }
+    });
     return await ofetch('https://api.disneylandparis.com/query', {
         method: 'POST',
         body: {
@@ -156,7 +173,7 @@ export async function getActivities(date: string): Promise<Activity[]> {
         },
     }).catch(console.error).then(response => {
         console.log(response);
-        if (response.data) {
+        if (response?.data) {
             const json = JSON.parse(response.data);
             return json?.activitySchedules || [];
         }
