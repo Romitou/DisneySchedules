@@ -50,7 +50,7 @@ export async function getAllActivities(): Promise<Activity[]> {
         date.setDate(nowDate.getDate() + i);
         const formattedDate = formatDate(date);
         const activitiesForDate = await fetchActivities(formattedDate);
-        if (activitiesForDate.length === 0 && date.getTime() > nowDate.setDate(nowDate.getDate() + 1)) {
+        if (activitiesForDate.length === 0 && date.getTime() > nowDate.setDate(nowDate.getDate() + 2)) {
             console.log('No more activities found for date ' + formattedDate)
             break;
         }
