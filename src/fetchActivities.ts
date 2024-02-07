@@ -37,6 +37,13 @@ function schedulesToString(schedules: ActivitySchedule[]): string {
 export async function getAllActivities(): Promise<Activity[]> {
     const allActivities: Record<string, Activity> = {};
 
+    if (fs.existsSync(__dirname + '/../constants.json')) {
+        const overrides = JSON.parse(fs.readFileSync(__dirname + '/../constants.json', 'utf8'));
+        for (const [id, activity] of Object.entries(overrides)) {
+            allActivities[id] = activity as Activity;
+        }
+    }
+
     const nowDate = new Date();
     for (let i = 0; i < 90; i++) {
         const date = new Date();
