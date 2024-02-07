@@ -48,12 +48,6 @@ export async function getAllActivities(): Promise<Activity[]> {
             console.log('No more activities found for date ' + formattedDate)
             break;
         }
-        if (fs.existsSync(__dirname + '/../../constants.json')) {
-            const overrides = JSON.parse(fs.readFileSync(__dirname + '/../../constants.json', 'utf8'));
-            for (const [_, activity] of Object.entries(overrides)) {
-                activitiesForDate.push(activity as Activity);
-            }
-        }
         for (const activity of activitiesForDate) {
             const schedulesString = schedulesToString(activity.schedules);
             const existingActivity = allActivities[activity.id];
@@ -107,6 +101,7 @@ export async function getAllActivities(): Promise<Activity[]> {
         }
     }
 
+    console.log('All activities fetched: ', allActivities)
     return Object.values(allActivities);
 }
 
@@ -117,6 +112,13 @@ export async function fetchActivities(date: string): Promise<Activity[]> {
     let overrides: Record<string, OverrideActivity> = {};
     if (fs.existsSync(__dirname + '/../../overrides.json')) {
         overrides = JSON.parse(fs.readFileSync(__dirname + '/../../overrides.json', 'utf-8'));
+    }
+
+    if (fs.existsSync(__dirname + '/../../constants.json')) {
+        const constants = JSON.parse(fs.readFileSync(__dirname + '/../../constants.json', 'utf8'));
+        for (const [_, activity] of Object.entries(constants)) {
+            activities.push(activity as Activity);
+        }
     }
 
     return activities.filter((activity) => activity.schedules.length > 0)
