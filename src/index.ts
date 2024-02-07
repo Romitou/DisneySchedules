@@ -8,7 +8,7 @@ import { config } from 'dotenv';
 import { REST } from '@discordjs/rest';
 import * as fs from 'fs';
 
-config({ path: __dirname + '/../.env' });
+config({ path: __dirname + '/../../.env' });
 
 export function formatHour(hour: string) {
 	hour = hour.substring(0, 5);
@@ -48,7 +48,7 @@ async function run(): Promise<void> {
 				description: activity.shortDescription,
 			}
 		})
-		fs.writeFileSync(__dirname + '/../overrides.json', JSON.stringify(generatedActivities, null, 2));
+		fs.writeFileSync(__dirname + '/../../overrides.json', JSON.stringify(generatedActivities, null, 2));
 	}
 }
 

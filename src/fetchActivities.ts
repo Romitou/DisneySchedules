@@ -37,8 +37,8 @@ function schedulesToString(schedules: ActivitySchedule[]): string {
 export async function getAllActivities(): Promise<Activity[]> {
     const allActivities: Record<string, Activity> = {};
 
-    if (fs.existsSync(__dirname + '/../constants.json')) {
-        const overrides = JSON.parse(fs.readFileSync(__dirname + '/../constants.json', 'utf8'));
+    if (fs.existsSync(__dirname + '/../../constants.json')) {
+        const overrides = JSON.parse(fs.readFileSync(__dirname + '/../../constants.json', 'utf8'));
         for (const [id, activity] of Object.entries(overrides)) {
             allActivities[id] = activity as Activity;
         }
@@ -115,8 +115,8 @@ export async function fetchActivities(date: string): Promise<Activity[]> {
     const activities = await getActivities(date);
 
     let overrides: Record<string, OverrideActivity> = {};
-    if (fs.existsSync(__dirname + '/../overrides.json')) {
-        overrides = JSON.parse(fs.readFileSync(__dirname + '/../overrides.json', 'utf-8'));
+    if (fs.existsSync(__dirname + '/../../overrides.json')) {
+        overrides = JSON.parse(fs.readFileSync(__dirname + '/../../overrides.json', 'utf-8'));
     }
 
     return activities.filter((activity) => activity.schedules.length > 0)
