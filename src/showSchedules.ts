@@ -27,7 +27,7 @@ export function generateShowEmbed(show: Activity): APIEmbed {
             stringToShow += stringToAdd;
         }
     }
-
+    console.log(stringToShow);
     const isDisneylandPark = show.location.id === 'P1';
     return {
         title: show.name.endsWith(' ') ? show.name.slice(0, -1) : show.name,
